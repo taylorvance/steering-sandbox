@@ -1,0 +1,15 @@
+{
+  "name": "steering-game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Taylor Vance",
+  "license": "ISC",
+  "dependencies": {
+    "vector-js": "git+https://github.com/tvance989/vector-js.git",
+    "vehicle-js": "git+https://github.com/tvance989/vehicle-js.git"
+  }
+}
