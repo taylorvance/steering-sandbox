@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "watch": "watchify main.js -o bundle.js -v",
     "test": "mocha"
   },
   "author": "Taylor Vance",

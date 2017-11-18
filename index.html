@@ -7,8 +7,6 @@
 
 	<script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
 
-	<script src="bundle.js"></script>
-
 	<style>
 		* { margin: 0; padding: 0;}
 		body, html {
@@ -22,5 +20,9 @@
 
 	<button onclick="play()">play</button>
 	<button onclick="pause()">pause</button>
+
+	<script src="bundle.js"></script>
+
+	<script charset="utf-8"> $("#canvas").mousemove(function(event){ mousemove(event.clientX, event.clientY); }); </script>
 </body>
 </html>
