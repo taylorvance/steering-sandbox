@@ -5,24 +5,76 @@
 	<meta name="viewport" content="width=device-width" />
 	<title>TV Steer</title>
 
-	<script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
-
 	<style>
 		* { margin: 0; padding: 0;}
 		body, html {
 			height: 100%;
 			overflow: hidden;
 		}
+
+		#my-sidemenu {
+			height: 100%;
+			position: fixed;
+			z-index: 1;
+			top: 0;
+			right: 0;
+			background: #abc;
+			background-color: rgba(170, 187, 204, 0.8);
+			overflow-x: hidden;
+			padding: 2.5em 0.5em;//.hack to get below toggle btn
+		}
+
+		#tog-btn {
+			position: fixed;
+			z-index: 2;
+			top: 1em;
+			right: 1em;
+		}
+
+		.class-config {
+			margin-top: 1em;
+		}
 	</style>
+
+	<script charset="utf-8">
+		var showMenu = true;
+		function toggleMenu() {
+			showMenu = !showMenu;
+			if (showMenu) {
+				document.getElementById("my-sidemenu").style.display = "block";
+			} else {
+				document.getElementById("my-sidemenu").style.display = "none";
+			}
+		}
+	</script>
 </head>
 <body>
 	<canvas id="canvas"></canvas>
 
-	<button onclick="play()">play</button>
-	<button onclick="pause()">pause</button>
+	<button id="tog-btn" onclick="toggleMenu()">menu</button>
+
+	<div id="my-sidemenu">
+		<button onclick="play()">play</button>
+		<button onclick="pause()">pause</button>
+
+		<div class="class-config">
+			<h4>Red</h4>
+			<div>
+				Create/Destroy:
+				<input type="number" value="1" id="red-num">
+				<button id="red-create" onclick="createVehicle('Red')">+</button>
+				<button id="red-destroy">-</button>
+			</div>
+			<div>Max Speed: <input type="number" value="100" id="red-speed"></div>
+			<div>Max Force: <input type="number" value="5" id="red-force"></div>
+			<div>Size: <input type="number" value="7" id="red-size"></div>
+			<div>Vision: <input type="number" value="50" id="red-perception"></div>
+			<div>Elbow Room: <input type="number" value="10" id="red-leeway"></div>
+		</div>
+
+		<button onclick="createVehicle('Green')">create green</button>
+	</div>
 
 	<script src="bundle.js"></script>
-
-	<script charset="utf-8"> $("#canvas").mousemove(function(event){ mousemove(event.clientX, event.clientY); }); </script>
 </body>
 </html>
