@@ -1,5 +1,9 @@
-// config classes
-//.figure out a better/programatic way to do this
+var Vector = Sandbox.Vector;
+var Vehicle = Sandbox.Vehicle;
+
+
+// configure classes
+//.figure out a better/programatic way to do this (WIP in main.js)
 
 var Red = function(pos, vel) {
 	Vehicle.call(this, pos, vel);
@@ -41,17 +45,19 @@ Blue.prototype.color = '#00c';
 
 // set up vehicle instances
 
-var red = createVehicle('Red', canvas.width / 2, canvas.height / 2);
+var red = Sandbox.createVehicle('Red', canvas.width / 2, canvas.height / 2);
 for (var i = 0, n = 20; i < n; i++) {
-	createVehicle('Green');
+	Sandbox.createVehicle('Green');
 }
 for (var i = 0, n = 500; i < n; i++) {
-	createVehicle('Blue');
+	Sandbox.createVehicle('Blue');
 }
-var tBlue = createVehicle('Blue'); // red's target blue
+var tBlue = Sandbox.createVehicle('Blue'); // red's target blue
 
 // special draw function for the target blue
 tBlue.draw = function() {
+	var ctx = Sandbox.getContext();
+
 	ctx.save();
 	ctx.fillStyle = '#0ff';
 	ctx.fillRect(this.position.x - 3, this.position.y - 3, 9, 9);
@@ -65,17 +71,17 @@ tBlue.draw = function() {
 
 
 
-window.mytick = function() {
-	// red seeks the first blue
+window.myupdate = function() {
+	var dt = Sandbox.deltaTime;
+
+	// red pursues the target blue
 	red.apply_force(red.pursue(tBlue), dt);
-	//red.apply_force(red.seek(tBlue.position), dt);
 
 	// greens flock toward red
 	vehicles['Green'].forEach(function(green){
 		var force = new Vector;
 
-		var neighbors = green.neighbors(vehicles['Green']);
-		force = force.add(green.flock(neighbors, 10, 5, 4)).scale(5);
+		force = force.add(green.flock(green.neighbors(vehicles['Green']), 10, 5, 4).scale(5));
 		force = force.add(green.pursue(red).scale(3));
 
 		green.apply_force(force, dt);
@@ -88,9 +94,7 @@ window.mytick = function() {
 		if (blue.position.sqrDist(red.position) < Math.pow(blue.perception, 2)) {
 			force = force.add(blue.evade(red).scale(3.5));
 		} else {
-			var neighbors = blue.neighbors(vehicles['Blue']);
-			force = force.add(blue.flock(neighbors, 10, 5, 4)).scale(4);
-
+			force = force.add(blue.flock(blue.neighbors(vehicles['Blue']), 10, 5, 4).scale(4));
 			force = force.add(blue.arrive(vMouse).scale(2));
 		}
 

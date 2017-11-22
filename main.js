@@ -1,26 +1,17 @@
-global.Vector = require("/Users/decisiontoolbox/dev/steering/vector");//.
-global.Vehicle = require("/Users/decisiontoolbox/dev/steering/vehicle");//.
+var Vector = require("/Users/decisiontoolbox/dev/steering/vector");//.
+var Vehicle = require("/Users/decisiontoolbox/dev/steering/vehicle");//.
 
 
-
-// default render code
-Vehicle.prototype.color = '#ccc';
-Vehicle.prototype.size = 3;
-Vehicle.prototype.draw = function() {
-	ctx.save();
-	ctx.fillStyle = this.color;
-	ctx.fillRect(this.position.x, this.position.y, this.size, this.size);
-	ctx.restore();
+global.Sandbox = {
+	Vector: Vector,
+	Vehicle: Vehicle
 };
 
 
 //.todo
-var vehicleSubclasses = [];
-function extendVehicle(config) {
+var extendVehicle = function(config) {
 	var classname = config.classname;
-}
-
-
+};
 
 
 
@@ -28,12 +19,13 @@ function extendVehicle(config) {
 var canvas = document.getElementById('canvas');
 canvas.width = document.documentElement.clientWidth;
 canvas.height = document.documentElement.clientHeight;
-global.ctx = canvas.getContext('2d');//.make this nonglobal
+var ctx = canvas.getContext('2d');
+Sandbox.getContext = function() { return ctx; };
 
 
 
-global.vehicles = {};//.make this nonglobal
-global.createVehicle = function(clsname, x, y) {
+global.vehicles = {};//.make this nonglobal?
+Sandbox.createVehicle = function(clsname, x, y) {
 	x = x || Math.random() * canvas.width;
 	y = y || Math.random() * canvas.height;
 
@@ -50,8 +42,17 @@ global.createVehicle = function(clsname, x, y) {
 
 	return vehicle;
 };
-global.vehicles = vehicles;//.try to remove this necessity
 
+
+// default render code
+Vehicle.prototype.color = '#ccc';
+Vehicle.prototype.size = 2;
+Vehicle.prototype.draw = function() {
+	ctx.save();
+	ctx.fillStyle = this.color;
+	ctx.fillRect(this.position.x, this.position.y, this.size, this.size);
+	ctx.restore();
+};
 
 
 function render() {
@@ -74,32 +75,29 @@ canvas.addEventListener("click", function(event){
 
 
 var FPS = 30;
-var intervalID;
 var lastUpdate;
 
 
-global.play = function() {
-	pause();
-	lastUpdate = Date.now();
-	intervalID = setInterval(tick, 1000/FPS);
-};
-
-global.pause = function() {
-	clearInterval(intervalID);
-};
-
-
-//.to be overridden in demo code. figure out cleaner way. instead call the demo's function inside this function?
-global.tick = function() {
+var update = function() {
 	var now = Date.now();
-	global.dt = (now - lastUpdate) / 1000;//.this is bad. shouldn't be global
+	Sandbox.deltaTime = (now - lastUpdate) / 1000;
 	lastUpdate = now;
 
-	if (typeof window.mytick === "function") {
-		window.mytick();
+	if (typeof window.myupdate === "function") {
+		window.myupdate();
 	}
 
 	render();
 };
 
-play();
+
+var intervalID;
+Sandbox.pause = function() {
+	clearInterval(intervalID);
+};
+Sandbox.play = function() {
+	Sandbox.pause();
+	lastUpdate = Date.now();
+	intervalID = setInterval(update, 1000/FPS);
+};
+Sandbox.play();
