@@ -9,8 +9,29 @@ global.Sandbox = {
 
 
 //.todo
-var extendVehicle = function(config) {
-	var classname = config.classname;
+Sandbox.extendVehicle = function(classname, config) {
+	if (typeof classname === "function") {
+		console.error("Can't extend Vehicle using classname \"" + classname + "\" (already a function).");
+		return false;
+	}
+	if (/[^a-zA-Z]/.test(classname)) {
+		console.error("Can't extend Vehicle using classname \"" + classname + "\" (contains non-letters).");
+		return false;
+	}
+
+	return;//.the below is what needs to happen
+	var Red = function(pos, vel) {
+		Vehicle.call(this, pos, vel);
+	}
+	Red.prototype = new Vehicle;
+	// config Red vehicle vars
+	Red.prototype.max_speed = 200;
+	Red.prototype.max_force = 5;
+	Red.prototype.mass = 1;
+	Red.prototype.perception = 50;
+	Red.prototype.leeway = 10;
+	Red.prototype.color = '#c00';
+	Red.prototype.size = 7;
 };
 
 

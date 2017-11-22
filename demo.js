@@ -5,6 +5,8 @@ var Vehicle = Sandbox.Vehicle;
 // configure classes
 //.figure out a better/programatic way to do this (WIP in main.js)
 
+var Yellow = Sandbox.extendVehicle('Yellow', {});
+
 var Red = function(pos, vel) {
 	Vehicle.call(this, pos, vel);
 }
