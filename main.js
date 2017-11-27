@@ -9,7 +9,8 @@ global.Sandbox = {
 
 
 //.todo
-Sandbox.extendVehicle = function(classname, config) {
+Sandbox.extendVehicle = function(config) {
+	/*
 	if (typeof classname === "function") {
 		console.error("Can't extend Vehicle using classname \"" + classname + "\" (already a function).");
 		return false;
@@ -18,20 +19,22 @@ Sandbox.extendVehicle = function(classname, config) {
 		console.error("Can't extend Vehicle using classname \"" + classname + "\" (contains non-letters).");
 		return false;
 	}
+	*/
 
-	return;//.the below is what needs to happen
-	var Red = function(pos, vel) {
+	var VehicleSubclass = function(pos, vel) {
 		Vehicle.call(this, pos, vel);
-	}
-	Red.prototype = new Vehicle;
-	// config Red vehicle vars
-	Red.prototype.max_speed = 200;
-	Red.prototype.max_force = 5;
-	Red.prototype.mass = 1;
-	Red.prototype.perception = 50;
-	Red.prototype.leeway = 10;
-	Red.prototype.color = '#c00';
-	Red.prototype.size = 7;
+	};
+	VehicleSubclass.prototype = new Vehicle;
+
+	VehicleSubclass.prototype.max_speed = config.maxSpeed || 200;
+	VehicleSubclass.prototype.max_force = config.maxForce || 20;
+	VehicleSubclass.prototype.mass = config.mass || 1;
+	VehicleSubclass.prototype.perception = config.perception || 50;
+	VehicleSubclass.prototype.leeway = config.leeway || 10;
+	VehicleSubclass.prototype.color = config.color || '#c00';
+	VehicleSubclass.prototype.size = config.size || 2;
+
+	return VehicleSubclass;
 };
 
 
@@ -45,21 +48,18 @@ Sandbox.getContext = function() { return ctx; };
 
 
 
-global.vehicles = {};//.make this nonglobal?
-Sandbox.createVehicle = function(clsname, x, y) {
+global.vehicles = [];//.make this nonglobal?
+Sandbox.createVehicle = function(VehicleSubclass, x, y) {
+	if(VehicleSubclass.prototype.constructor.name !== "Vehicle") {
+		console.error("Failed to create vehicle. Given function is not a \"subclass\" of Vehicle.", VehicleSubclass);
+		return false;
+	}
+
 	x = x || Math.random() * canvas.width;
 	y = y || Math.random() * canvas.height;
 
-	//.use "instance of" instead
-	if (['Red', 'Green', 'Blue'].indexOf(clsname) === -1) return;
-	//eval('var vehicle = new '+clsname+'(new Vector('+x+', '+y+'));'); // I know, bite me.
-	var vehicle = new window[clsname](new Vector(x, y));
-
-	if (!Array.isArray(vehicles[clsname])) {
-		vehicles[clsname] = [];
-	}
-
-	vehicles[clsname].push(vehicle);
+	var vehicle = new VehicleSubclass(new Vector(x, y));
+	vehicles.push(vehicle);
 
 	return vehicle;
 };
@@ -80,11 +80,9 @@ function render() {
 	ctx.fillStyle = '#def';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-	for (clsname in vehicles) {
-		vehicles[clsname].forEach(function(v){
-			v.draw();
-		});
-	}
+	vehicles.forEach(function(v){
+		v.draw();
+	});
 }
 
 

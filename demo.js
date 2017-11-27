@@ -3,58 +3,51 @@ var Vehicle = Sandbox.Vehicle;
 
 
 // configure classes
-//.figure out a better/programatic way to do this (WIP in main.js)
 
-var Yellow = Sandbox.extendVehicle('Yellow', {});
+var Red = Sandbox.extendVehicle({
+	maxSpeed: 200,
+	maxForce: 5,
+	mass: 1,
+	perception: 50,
+	leeway: 10,
+	color: '#c00',
+	size: 7
+});
 
-var Red = function(pos, vel) {
-	Vehicle.call(this, pos, vel);
-}
-Red.prototype = new Vehicle;
-// config Red vehicle vars
-Red.prototype.max_speed = 200;
-Red.prototype.max_force = 5;
-Red.prototype.mass = 1;
-Red.prototype.perception = 50;
-Red.prototype.leeway = 10;
-Red.prototype.color = '#c00';
-Red.prototype.size = 7;
+var Green = Sandbox.extendVehicle({
+	maxSpeed: 200,
+	maxForce: 10,
+	mass: 1,
+	perception: 100,
+	leeway: 20,
+	color: '#0c0',
+	size: 4
+});
 
-var Green = function(pos, vel) {
-	Vehicle.call(this, pos, vel);
-}
-Green.prototype = new Vehicle;
-// config Green vehicle vars
-Green.prototype.max_speed = 200;
-Green.prototype.max_force = 10;
-Green.prototype.mass = 1;
-Green.prototype.perception = 100;
-Green.prototype.leeway = 20;
-Green.prototype.color = '#0c0';
-Green.prototype.size = 4;
+var Blue = Sandbox.extendVehicle({
+	maxSpeed: 150,
+	maxForce: 15,
+	mass: 1,
+	perception: 100,
+	leeway: 15,
+	color: '#00c',
+	size: 2
+});
 
-var Blue = function(pos, vel) {
-	Vehicle.call(this, pos, vel);
-}
-Blue.prototype = new Vehicle;
-// config Blue vehicle vars
-Blue.prototype.max_speed = 150;
-Blue.prototype.max_force = 15;
-Blue.prototype.mass = 1;
-Blue.prototype.perception = 100;
-Blue.prototype.leeway = 15;
-Blue.prototype.color = '#00c';
 
 // set up vehicle instances
 
-var red = Sandbox.createVehicle('Red', canvas.width / 2, canvas.height / 2);
+var red = Sandbox.createVehicle(Red, canvas.width / 2, canvas.height / 2);
+var greens = [];
 for (var i = 0, n = 20; i < n; i++) {
-	Sandbox.createVehicle('Green');
+	greens.push(Sandbox.createVehicle(Green));
 }
+var blues = [];
 for (var i = 0, n = 500; i < n; i++) {
-	Sandbox.createVehicle('Blue');
+	blues.push(Sandbox.createVehicle(Blue));
 }
-var tBlue = Sandbox.createVehicle('Blue'); // red's target blue
+var tBlue = Sandbox.createVehicle(Blue); // red's target blue
+blues.push(tBlue);
 
 // special draw function for the target blue
 tBlue.draw = function() {
@@ -80,23 +73,23 @@ window.myupdate = function() {
 	red.apply_force(red.pursue(tBlue), dt);
 
 	// greens flock toward red
-	vehicles['Green'].forEach(function(green){
+	greens.forEach(function(green){
 		var force = new Vector;
 
-		force = force.add(green.flock(green.neighbors(vehicles['Green']), 10, 5, 4).scale(5));
+		force = force.add(green.flock(green.neighbors(greens), 10, 5, 4).scale(5));
 		force = force.add(green.pursue(red).scale(3));
 
 		green.apply_force(force, dt);
 	});
 
 	// blues either evade red or flock toward mouse
-	vehicles['Blue'].forEach(function(blue){
+	blues.forEach(function(blue){
 		var force = new Vector;
 
 		if (blue.position.sqrDist(red.position) < Math.pow(blue.perception, 2)) {
 			force = force.add(blue.evade(red).scale(3.5));
 		} else {
-			force = force.add(blue.flock(blue.neighbors(vehicles['Blue']), 10, 5, 4).scale(4));
+			force = force.add(blue.flock(blue.neighbors(blues), 10, 5, 4).scale(4));
 			force = force.add(blue.arrive(vMouse).scale(2));
 		}
 
