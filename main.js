@@ -26,8 +26,8 @@ Sandbox.extendVehicle = function(config) {
 	};
 	VehicleSubclass.prototype = new Vehicle;
 
-	VehicleSubclass.prototype.max_speed = config.maxSpeed || 200;
-	VehicleSubclass.prototype.max_force = config.maxForce || 20;
+	VehicleSubclass.prototype.maxSpeed = config.maxSpeed || 200;
+	VehicleSubclass.prototype.maxForce = config.maxForce || 20;
 	VehicleSubclass.prototype.mass = config.mass || 1;
 	VehicleSubclass.prototype.perception = config.perception || 50;
 	VehicleSubclass.prototype.leeway = config.leeway || 10;

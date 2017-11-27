@@ -234,8 +234,8 @@ describe('Vehicle', function() {
 			Vehicle.call(this, pos, vel);
 		}
 		MyVehicle.prototype = new Vehicle;
-		MyVehicle.prototype.max_speed = 10;
-		MyVehicle.prototype.max_force = 5;
+		MyVehicle.prototype.maxSpeed = 10;
+		MyVehicle.prototype.maxForce = 5;
 		MyVehicle.prototype.mass = 1;
 		MyVehicle.prototype.perception = 20;
 		MyVehicle.prototype.leeway = 2;
@@ -256,45 +256,45 @@ describe('Vehicle', function() {
 			});
 		});
 
-		describe('#apply_force()', function() {
+		describe('#applyForce()', function() {
 			it('should work', function() {
 				var mv = new MyVehicle;
-				mv.apply_force(new Vector(2, 0));
+				mv.applyForce(new Vector(2, 0));
 				assert.deepEqual(mv.velocity, new Vector(2, 0));
 				assert.deepEqual(mv.position, new Vector(2, 0));
 
-				mv.apply_force(new Vector(2, 0));
+				mv.applyForce(new Vector(2, 0));
 				assert.deepEqual(mv.velocity, new Vector(4, 0));
 				assert.deepEqual(mv.position, new Vector(6, 0));
 
 				// applying the zero vector should produce no change to velocity but continue to change position
-				mv.apply_force(new Vector);
+				mv.applyForce(new Vector);
 				assert.deepEqual(mv.velocity, new Vector(4, 0));
 				assert.deepEqual(mv.position, new Vector(10, 0));
 			});
 
 			it('should respect max force', function() {
 				var mv = new MyVehicle;
-				mv.apply_force(new Vector(100, 0));
+				mv.applyForce(new Vector(100, 0));
 				assert.deepEqual(mv.velocity, new Vector(5, 0));
 				assert.deepEqual(mv.position, new Vector(5, 0));
 			});
 
 			it('should respect delta time (dt)', function() {
 				var mv = new MyVehicle;
-				mv.apply_force(new Vector(100, 0), 0.5);
+				mv.applyForce(new Vector(100, 0), 0.5);
 				assert.deepEqual(mv.velocity, new Vector(5, 0));
 				assert.deepEqual(mv.position, new Vector(2.5, 0));
 
-				mv.apply_force(new Vector, 0.5);
+				mv.applyForce(new Vector, 0.5);
 				assert.deepEqual(mv.velocity, new Vector(5, 0));
 				assert.deepEqual(mv.position, new Vector(5, 0));
 
-				mv.apply_force(new Vector, 2);
+				mv.applyForce(new Vector, 2);
 				assert.deepEqual(mv.velocity, new Vector(5, 0));
 				assert.deepEqual(mv.position, new Vector(15, 0));
 
-				mv.apply_force(new Vector, 1);
+				mv.applyForce(new Vector, 1);
 				assert.deepEqual(mv.velocity, new Vector(5, 0));
 				assert.deepEqual(mv.position, new Vector(20, 0));
 			});
@@ -307,7 +307,7 @@ describe('Vehicle', function() {
 				var target = new Vector(42, 108);
 
 				for (var i = 0; i < 105; i++) {
-					mv.apply_force(mv.seek(target));
+					mv.applyForce(mv.seek(target));
 				}
 
 				var d = mv.position.distance(target);
@@ -345,7 +345,7 @@ describe('Vehicle', function() {
 				var target = new Vector(42, 108);
 
 				for (var i = 0; i < 1000; i++) {
-					mv.apply_force(mv.arrive(target), 0.1);
+					mv.applyForce(mv.arrive(target), 0.1);
 				}
 
 				assert.equal(Math.floor(mv.velocity.magnitude()), 0);

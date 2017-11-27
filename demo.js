@@ -49,6 +49,7 @@ for (var i = 0, n = 500; i < n; i++) {
 var tBlue = Sandbox.createVehicle(Blue); // red's target blue
 blues.push(tBlue);
 
+
 // special draw function for the target blue
 tBlue.draw = function() {
 	var ctx = Sandbox.getContext();
@@ -70,7 +71,7 @@ window.myupdate = function() {
 	var dt = Sandbox.deltaTime;
 
 	// red pursues the target blue
-	red.apply_force(red.pursue(tBlue), dt);
+	red.applyForce(red.pursue(tBlue), dt);
 
 	// greens flock toward red
 	greens.forEach(function(green){
@@ -79,7 +80,7 @@ window.myupdate = function() {
 		force = force.add(green.flock(green.neighbors(greens), 10, 5, 4).scale(5));
 		force = force.add(green.pursue(red).scale(3));
 
-		green.apply_force(force, dt);
+		green.applyForce(force, dt);
 	});
 
 	// blues either evade red or flock toward mouse
@@ -93,6 +94,6 @@ window.myupdate = function() {
 			force = force.add(blue.arrive(vMouse).scale(2));
 		}
 
-		blue.apply_force(force, dt);
+		blue.applyForce(force, dt);
 	});
 };
