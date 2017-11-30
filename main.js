@@ -2,39 +2,31 @@ var Vector = require("/Users/decisiontoolbox/dev/steering/vector");//.
 var Vehicle = require("/Users/decisiontoolbox/dev/steering/vehicle");//.
 
 
+//.is there a better way to access this from front end and unit tests?
 global.Sandbox = {
 	Vector: Vector,
 	Vehicle: Vehicle
 };
 
 
-//.todo
-Sandbox.extendVehicle = function(config) {
-	/*
-	if (typeof classname === "function") {
-		console.error("Can't extend Vehicle using classname \"" + classname + "\" (already a function).");
-		return false;
-	}
-	if (/[^a-zA-Z]/.test(classname)) {
-		console.error("Can't extend Vehicle using classname \"" + classname + "\" (contains non-letters).");
-		return false;
-	}
-	*/
+Sandbox.vehicleSubclasses = {};
+Sandbox.extendVehicle = function(name, config) {
+	config = config || {};
 
-	var VehicleSubclass = function(pos, vel) {
+	Sandbox.vehicleSubclasses[name] = function(pos, vel) {
 		Vehicle.call(this, pos, vel);
 	};
-	VehicleSubclass.prototype = new Vehicle;
+	Sandbox.vehicleSubclasses[name].prototype = new Vehicle;
 
-	VehicleSubclass.prototype.maxSpeed = config.maxSpeed || 200;
-	VehicleSubclass.prototype.maxForce = config.maxForce || 20;
-	VehicleSubclass.prototype.mass = config.mass || 1;
-	VehicleSubclass.prototype.perception = config.perception || 50;
-	VehicleSubclass.prototype.leeway = config.leeway || 10;
-	VehicleSubclass.prototype.color = config.color || '#c00';
-	VehicleSubclass.prototype.size = config.size || 2;
+	Sandbox.vehicleSubclasses[name].prototype.maxSpeed = config.maxSpeed || 200;
+	Sandbox.vehicleSubclasses[name].prototype.maxForce = config.maxForce || 20;
+	Sandbox.vehicleSubclasses[name].prototype.mass = config.mass || 1;
+	Sandbox.vehicleSubclasses[name].prototype.perception = config.perception || 50;
+	Sandbox.vehicleSubclasses[name].prototype.leeway = config.leeway || 10;
+	Sandbox.vehicleSubclasses[name].prototype.color = config.color || '#c00';
+	Sandbox.vehicleSubclasses[name].prototype.size = config.size || 2;
 
-	return VehicleSubclass;
+	return Sandbox.vehicleSubclasses[name];
 };
 
 
@@ -67,6 +59,7 @@ Sandbox.addUpdateFunction = function(fn) {
 };
 
 
+//.make a Sandbox setter. when it's changed, restart the interval (pause/play)
 var FPS = 30;
 
 var lastUpdate;

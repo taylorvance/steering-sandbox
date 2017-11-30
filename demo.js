@@ -22,7 +22,7 @@ Vehicle.prototype.draw = function() {
 
 // configure classes
 
-var Red = Sandbox.extendVehicle({
+var Red = Sandbox.extendVehicle("Red", {
 	maxSpeed: 200,
 	maxForce: 5,
 	mass: 1,
@@ -32,7 +32,7 @@ var Red = Sandbox.extendVehicle({
 	size: 7
 });
 
-var Green = Sandbox.extendVehicle({
+var Green = Sandbox.extendVehicle("Green", {
 	maxSpeed: 200,
 	maxForce: 10,
 	mass: 1,
@@ -42,7 +42,7 @@ var Green = Sandbox.extendVehicle({
 	size: 4
 });
 
-var Blue = Sandbox.extendVehicle({
+var Blue = Sandbox.extendVehicle("Blue", {
 	maxSpeed: 150,
 	maxForce: 15,
 	mass: 1,
@@ -117,10 +117,10 @@ Sandbox.addUpdateFunction(function(){
 		var force = new Vector;
 
 		if (blue.position.sqrDist(red.position) < Math.pow(blue.perception, 2)) {
-			force = force.add(blue.evade(red).scale(3.5));
+			force = force.add(blue.evade(red));
 		} else {
-			force = force.add(blue.flock(blue.neighbors(blues), 10, 5, 4).scale(4));
-			force = force.add(blue.arrive(vMouse).scale(2));
+			force = force.add(blue.flock(blue.neighbors(blues), 10, 5, 4).scale(2));
+			force = force.add(blue.arrive(clickPos));
 		}
 
 		blue.applyForce(force, dt);
