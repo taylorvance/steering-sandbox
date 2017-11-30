@@ -1,0 +1,29 @@
+body, html {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	overflow: hidden;
+}
+
+#my-sidemenu {
+	height: 100%;
+	position: fixed;
+	z-index: 1;
+	top: 0;
+	right: 0;
+	background-color: rgba(170, 187, 204, 0.8);
+	overflow-x: hidden;
+	padding: 2.5em 0.5em;/*//.hack to get below toggle btn*/
+	display: none;
+}
+
+#tog-btn {
+	position: fixed;
+	z-index: 2;
+	top: 1em;
+	right: 1em;
+}
+
+.class-config {
+	margin-top: 1em;
+}
