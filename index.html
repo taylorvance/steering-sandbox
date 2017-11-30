@@ -17,6 +17,10 @@
 				document.getElementById("my-sidemenu").style.display = "none";
 			}
 		}
+
+		function createVehicle(classname) {
+			Sandbox.createVehicle("Black");
+		}
 	</script>
 </head>
 <body>
@@ -28,36 +32,41 @@
 		<button onclick="Sandbox.play()">play</button>
 		<button onclick="Sandbox.pause()">pause</button>
 
-		<div class="class-config">
-			<h2>Red</h2>
+		<div>
+			<h2>Black</h2>
 
 			<div>
 				Create/Destroy:
-				<input type="number" value="1" id="red-num">
-				<button id="red-create" onclick="createVehicle('Red')">+</button>
-				<button id="red-destroy">-</button>
+				<input type="number" value="1" id="black-num">
+				<button id="black-create" onclick="createVehicle('Black')">+</button>
+				<button id="black-destroy" onclick="destroyVehicle('Black')">-</button>
 			</div>
 
-			<br>
 			<h3>Properties</h3>
-			<div>Max Speed: <input type="number" value="100" id="red-speed"></div>
-			<div>Max Force: <input type="number" value="5" id="red-force"></div>
-			<div>Size: <input type="number" value="7" id="red-size"></div>
-			<div>Vision: <input type="number" value="50" id="red-perception"></div>
-			<div>Elbow Room: <input type="number" value="10" id="red-leeway"></div>
+			<div>Max Speed: <input type="number" value="100" id="black-speed"></div>
+			<div>Max Force: <input type="number" value="5" id="black-force"></div>
+			<div>Size: <input type="number" value="7" id="black-size"></div>
+			<div>Vision: <input type="number" value="50" id="black-perception"></div>
+			<div>Elbow Room: <input type="number" value="10" id="black-leeway"></div>
 
-			<br>
 			<h3>Behaviors</h3>
 			<div>
-				<label>
-					<input type="checkbox" id="red-seek">
-					Seek:
-				</label>
-				<input type="number" value="100" id="red-seek-x">, <input type="number" value="100" id="red-seek-y">
+				<div>
+					<label>
+						<input type="checkbox" id="black-seek">
+						Seek:
+					</label>
+					<input type="number" value="100" id="black-seek-x">, <input type="number" value="100" id="black-seek-y">
+				</div>
+				<div>
+					<label>
+						<input type="checkbox" id="black-arrive">
+						Arrive:
+					</label>
+					<input type="number" value="100" id="black-arrive-x">, <input type="number" value="100" id="black-arrive-y">
+				</div>
 			</div>
 		</div>
-
-		<button onclick="createVehicle('Green')">create green</button>
 	</div>
 
 	<script src="bundle.js"></script>
