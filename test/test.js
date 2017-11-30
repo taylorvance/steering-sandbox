@@ -2,6 +2,7 @@ var assert = require('assert');
 
 var Vector = require("/Users/decisiontoolbox/dev/steering/vector");//.
 var Vehicle = require("/Users/decisiontoolbox/dev/steering/vehicle");//.
+var asdf = require("../main.js");//.
 
 describe('Vector', function() {
 	describe('constructor', function() {
@@ -228,7 +229,7 @@ describe('Vehicle', function() {
 		});
 	});
 
-	it('subclass', function() {
+	describe('subclass', function() {
 		//.figure out a better way to extend Vehicle, preferably programatically from a config file or user input
 		var MyVehicle = function(pos, vel) {
 			Vehicle.call(this, pos, vel);
@@ -298,6 +299,29 @@ describe('Vehicle', function() {
 				assert.deepEqual(mv.velocity, new Vector(5, 0));
 				assert.deepEqual(mv.position, new Vector(20, 0));
 			});
+
+			it('should return actual acceleration', function() {
+				var mv = new MyVehicle;
+				var force = new Vector(100, 0);
+
+				// from stopped up to max force
+				var acc = mv.applyForce(force);
+				assert.deepEqual(mv.velocity, new Vector(5, 0));
+				assert.deepEqual(mv.position, new Vector(5, 0));
+				assert.deepEqual(acc, new Vector(5, 0));
+
+				// now up to max speed
+				var acc = mv.applyForce(force);
+				assert.deepEqual(mv.velocity, new Vector(10, 0));
+				assert.deepEqual(mv.position, new Vector(15, 0));
+				assert.deepEqual(acc, new Vector(5, 0));
+
+				// while at max speed, there's no more acceleration in that direction
+				var acc = mv.applyForce(force);
+				assert.deepEqual(mv.velocity, new Vector(10, 0));
+				assert.deepEqual(mv.position, new Vector(25, 0));
+				assert.deepEqual(acc, new Vector(0, 0));
+			});
 		});
 
 		describe('#seek()', function() {
@@ -350,6 +374,53 @@ describe('Vehicle', function() {
 
 				assert.equal(Math.floor(mv.velocity.magnitude()), 0);
 			});
+		});
+	});
+});
+
+
+
+describe('Sandbox', function() {
+	var Red = Sandbox.extendVehicle("Red", {
+		maxSpeed: 243,
+		maxForce: 5,
+		mass: 1,
+		perception: 50,
+		leeway: 10,
+		color: '#c00',
+		size: 7
+	});
+
+
+	describe('#extendVehicle()', function() {
+		it('should work', function() {
+			var red = new Red;
+
+			assert.notEqual(Vehicle.maxSpeed, 243);
+			assert.equal(Red.prototype.maxSpeed, 243);
+
+			assert.equal(red.maxSpeed, 243);
+			red.maxSpeed = 250;
+			assert.equal(red.maxSpeed, 250);
+		});
+	});
+
+	describe('vehicleSubclasses', function() {
+		it('should be accessible from the Sandbox object', function() {
+			var red = new Red;
+			assert.equal(red.maxSpeed, 243);
+
+			assert.deepEqual(Sandbox.vehicleSubclasses["Red"], Red);
+		});
+	});
+
+	describe('#createVehicle()', function() {
+		it('should work with a string or the class object', function() {
+			var redStr = Sandbox.createVehicle("Red");
+			var redCls = Sandbox.createVehicle(Red);
+
+			assert.equal(redStr.maxSpeed, 243);
+			assert.equal(redCls.maxSpeed, 243);
 		});
 	});
 });
