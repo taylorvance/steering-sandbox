@@ -2,6 +2,24 @@ var Vector = Sandbox.Vector;
 var Vehicle = Sandbox.Vehicle;
 
 
+// set up html canvas
+var canvas = document.getElementById('canvas');
+canvas.width = document.documentElement.clientWidth;
+canvas.height = document.documentElement.clientHeight;
+var ctx = canvas.getContext('2d');
+
+
+// default vehicle render code
+
+Vehicle.prototype.color = '#ccc';
+Vehicle.prototype.size = 2;
+Vehicle.prototype.draw = function() {
+	ctx.save();
+	ctx.fillStyle = this.color;
+	ctx.fillRect(this.position.x, this.position.y, this.size, this.size);
+	ctx.restore();
+};
+
 // configure classes
 
 var Red = Sandbox.extendVehicle({
@@ -36,24 +54,22 @@ var Blue = Sandbox.extendVehicle({
 
 
 // set up vehicle instances
-
-var red = Sandbox.createVehicle(Red, canvas.width / 2, canvas.height / 2);
+var red = Sandbox.createVehicle(Red, new Vector(canvas.width / 2, canvas.height / 2));
 var greens = [];
 for (var i = 0, n = 20; i < n; i++) {
-	greens.push(Sandbox.createVehicle(Green));
+	greens.push(Sandbox.createVehicle(Green, new Vector(Math.random() * canvas.width, Math.random() * canvas.height)));
 }
 var blues = [];
 for (var i = 0, n = 500; i < n; i++) {
-	blues.push(Sandbox.createVehicle(Blue));
+	blues.push(Sandbox.createVehicle(Blue, new Vector(Math.random() * canvas.width, Math.random() * canvas.height)));
 }
-var tBlue = Sandbox.createVehicle(Blue); // red's target blue
+var tBlue = Sandbox.createVehicle(Blue, new Vector(Math.random() * canvas.width, Math.random() * canvas.height)); // red's target blue
 blues.push(tBlue);
-
+//var red2 = Sandbox.createVehicle(Red, new Vector(10, canvas.height / 2 - 10));
+//red2.velocity = new Vector(5000, 0);
 
 // special draw function for the target blue
 tBlue.draw = function() {
-	var ctx = Sandbox.getContext();
-
 	ctx.save();
 	ctx.fillStyle = '#0ff';
 	ctx.fillRect(this.position.x - 3, this.position.y - 3, 9, 9);
@@ -66,12 +82,25 @@ tBlue.draw = function() {
 };
 
 
+var clickPos = new Vector;
+canvas.addEventListener("click", function(event){
+	clickPos.x = event.clientX;
+	clickPos.y = event.clientY;
 
-window.myupdate = function() {
+	//greens.forEach(function(green){
+		//green.applyForce(new Vector(0, -2), 1, true);
+	//});
+});
+
+
+// steering behaviors
+Sandbox.addUpdateFunction(function(){
 	var dt = Sandbox.deltaTime;
 
 	// red pursues the target blue
 	red.applyForce(red.pursue(tBlue), dt);
+
+	//red2.applyForce(red2.brake().scale(5), dt);
 
 	// greens flock toward red
 	greens.forEach(function(green){
@@ -96,4 +125,19 @@ window.myupdate = function() {
 
 		blue.applyForce(force, dt);
 	});
-};
+});
+
+
+// render code
+Sandbox.addUpdateFunction(function(){
+	ctx.fillStyle = '#def';
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+	Sandbox.vehicles.forEach(function(v){
+		v.draw();
+	});
+});
+
+
+// start the update loop
+Sandbox.play();

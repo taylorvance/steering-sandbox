@@ -39,84 +39,57 @@ Sandbox.extendVehicle = function(config) {
 
 
 
-// set up html canvas
-var canvas = document.getElementById('canvas');
-canvas.width = document.documentElement.clientWidth;
-canvas.height = document.documentElement.clientHeight;
-var ctx = canvas.getContext('2d');
-Sandbox.getContext = function() { return ctx; };
-
-
-
-global.vehicles = [];//.make this nonglobal?
-Sandbox.createVehicle = function(VehicleSubclass, x, y) {
-	if(VehicleSubclass.prototype.constructor.name !== "Vehicle") {
-		console.error("Failed to create vehicle. Given function is not a \"subclass\" of Vehicle.", VehicleSubclass);
+Sandbox.vehicles = [];
+/**
+ * @param {(string|Vehicle)} vehicleSubclass The name of the subclass or the actual class object.
+ * @param {Vector} v Vehicle's position.
+ */
+Sandbox.createVehicle = function(vehicleSubclass, v) {
+	// If we're given a string, see if we've defined a subclass with that name.
+	if(typeof vehicleSubclass === "string") {
+		vehicleSubclass = Sandbox.vehicleSubclasses[vehicleSubclass];
+	}
+	if(typeof vehicleSubclass !== "function" || vehicleSubclass.prototype.constructor.name !== "Vehicle") {
+		console.error("Failed to create vehicle. First argument is not a subclass of Vehicle.", vehicleSubclass);
 		return false;
 	}
 
-	x = x || Math.random() * canvas.width;
-	y = y || Math.random() * canvas.height;
-
-	var vehicle = new VehicleSubclass(new Vector(x, y));
-	vehicles.push(vehicle);
+	var vehicle = new vehicleSubclass(v);
+	Sandbox.vehicles.push(vehicle);
 
 	return vehicle;
 };
 
 
-// default render code
-Vehicle.prototype.color = '#ccc';
-Vehicle.prototype.size = 2;
-Vehicle.prototype.draw = function() {
-	ctx.save();
-	ctx.fillStyle = this.color;
-	ctx.fillRect(this.position.x, this.position.y, this.size, this.size);
-	ctx.restore();
+var updateFns = [];
+Sandbox.addUpdateFunction = function(fn) {
+	updateFns.push(fn);
 };
 
 
-function render() {
-	ctx.fillStyle = '#def';
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-	vehicles.forEach(function(v){
-		v.draw();
-	});
-}
-
-
-global.vMouse = new Vector;
-canvas.addEventListener("click", function(event){
-	vMouse.x = event.clientX;
-	vMouse.y = event.clientY;
-});
-
-
 var FPS = 30;
+
 var lastUpdate;
-
-
+Sandbox.deltaTime = 1;
 var update = function() {
 	var now = Date.now();
 	Sandbox.deltaTime = (now - lastUpdate) / 1000;
 	lastUpdate = now;
 
-	if (typeof window.myupdate === "function") {
-		window.myupdate();
+	if(document.hasFocus()) {
+		updateFns.forEach(function(fn){
+			fn();
+		});
 	}
-
-	render();
 };
 
 
 var intervalID;
-Sandbox.pause = function() {
-	clearInterval(intervalID);
-};
 Sandbox.play = function() {
 	Sandbox.pause();
 	lastUpdate = Date.now();
 	intervalID = setInterval(update, 1000/FPS);
 };
-Sandbox.play();
+Sandbox.pause = function() {
+	clearInterval(intervalID);
+};
