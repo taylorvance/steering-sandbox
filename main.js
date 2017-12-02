@@ -33,20 +33,22 @@ Sandbox.extendVehicle = function(name, config) {
 
 Sandbox.vehicles = [];
 /**
- * @param {(string|Vehicle)} vehicleSubclass The name of the subclass or the actual class object.
- * @param {Vector} v Vehicle's position.
+ * @param {(string|Vehicle)} vehicleSubclass The name of the subclass, or the actual class object.
+ * @param {Vector} pos Vehicle's position.
+ * @param {Vector} vel Vehicle's velocity.
  */
-Sandbox.createVehicle = function(vehicleSubclass, v) {
+Sandbox.createVehicle = function(vehicleSubclass, pos, vel) {
 	// If we're given a string, see if we've defined a subclass with that name.
 	if(typeof vehicleSubclass === "string") {
 		vehicleSubclass = Sandbox.vehicleSubclasses[vehicleSubclass];
 	}
+	//.this won't work if the subclass does not directly extend Vehicle (2nd gen subclass)
 	if(typeof vehicleSubclass !== "function" || vehicleSubclass.prototype.constructor.name !== "Vehicle") {
 		console.error("Failed to create vehicle. First argument is not a subclass of Vehicle.", vehicleSubclass);
 		return false;
 	}
 
-	var vehicle = new vehicleSubclass(v);
+	var vehicle = new vehicleSubclass(pos, vel);
 	Sandbox.vehicles.push(vehicle);
 
 	return vehicle;

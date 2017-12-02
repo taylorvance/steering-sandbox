@@ -17,10 +17,6 @@
 				document.getElementById("my-sidemenu").style.display = "none";
 			}
 		}
-
-		function createVehicle(classname) {
-			Sandbox.createVehicle("Black");
-		}
 	</script>
 </head>
 <body>
@@ -38,7 +34,7 @@
 			<div>
 				Create/Destroy:
 				<input type="number" value="1" id="black-num">
-				<button id="black-create" onclick="createVehicle('Black')">+</button>
+				<button id="black-create" onclick="Sandbox.createVehicle('Black')">+</button>
 				<button id="black-destroy" onclick="destroyVehicle('Black')">-</button>
 			</div>
 

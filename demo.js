@@ -20,6 +20,7 @@ Vehicle.prototype.draw = function() {
 	ctx.restore();
 };
 
+
 // configure classes
 
 var Red = Sandbox.extendVehicle("Red", {
@@ -52,6 +53,8 @@ var Blue = Sandbox.extendVehicle("Blue", {
 	size: 2
 });
 
+var Black = Sandbox.extendVehicle("Black");
+
 
 // set up vehicle instances
 var red = Sandbox.createVehicle(Red, new Vector(canvas.width / 2, canvas.height / 2));
@@ -65,8 +68,7 @@ for (var i = 0, n = 500; i < n; i++) {
 }
 var tBlue = Sandbox.createVehicle(Blue, new Vector(Math.random() * canvas.width, Math.random() * canvas.height)); // red's target blue
 blues.push(tBlue);
-//var red2 = Sandbox.createVehicle(Red, new Vector(10, canvas.height / 2 - 10));
-//red2.velocity = new Vector(5000, 0);
+var black = Sandbox.createVehicle(Black, new Vector(canvas.width / 2, canvas.height / 2));
 
 // special draw function for the target blue
 tBlue.draw = function() {
