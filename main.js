@@ -2,45 +2,50 @@ var Vector = require("/Users/decisiontoolbox/dev/steering/vector");//.
 var Vehicle = require("/Users/decisiontoolbox/dev/steering/vehicle");//.
 
 
-//.is there a better way to access this from front end and unit tests?
-global.Sandbox = {
-	Vector: Vector,
-	Vehicle: Vehicle
+var Steersman = function() {
+	this.vehicles = [];
+	this.vehicleSubclasses = {};
+	this.updateFns = [];
+	this.FPS = 30;
 };
 
+//.del this stuff when you figure out how to do it better
+Steersman.Vector = Vector;
+Steersman.Vehicle = Vehicle;
+global.Steersman = Steersman;
 
-Sandbox.vehicleSubclasses = {};
-Sandbox.extendVehicle = function(name, config) {
+Steersman.prototype.extendVehicle = function(name, config) {
 	config = config || {};
 
-	Sandbox.vehicleSubclasses[name] = function(pos, vel) {
+	// "Extend" the base Vehicle "class"
+	this.vehicleSubclasses[name] = function(pos, vel) {
 		Vehicle.call(this, pos, vel);
 	};
-	Sandbox.vehicleSubclasses[name].prototype = new Vehicle;
+	this.vehicleSubclasses[name].prototype = new Vehicle;
 
-	Sandbox.vehicleSubclasses[name].prototype.maxSpeed = config.maxSpeed || 200;
-	Sandbox.vehicleSubclasses[name].prototype.maxForce = config.maxForce || 20;
-	Sandbox.vehicleSubclasses[name].prototype.mass = config.mass || 1;
-	Sandbox.vehicleSubclasses[name].prototype.perception = config.perception || 50;
-	Sandbox.vehicleSubclasses[name].prototype.leeway = config.leeway || 10;
-	Sandbox.vehicleSubclasses[name].prototype.color = config.color || '#c00';
-	Sandbox.vehicleSubclasses[name].prototype.size = config.size || 2;
+	// Set child class variables
+	this.vehicleSubclasses[name].prototype.maxSpeed = config.maxSpeed || 200;
+	this.vehicleSubclasses[name].prototype.maxForce = config.maxForce || 20;
+	this.vehicleSubclasses[name].prototype.mass = config.mass || 1;
+	this.vehicleSubclasses[name].prototype.perception = config.perception || 50;
+	this.vehicleSubclasses[name].prototype.leeway = config.leeway || 10;
+	this.vehicleSubclasses[name].prototype.color = config.color || '#c00';
+	this.vehicleSubclasses[name].prototype.size = config.size || 2;
 
-	return Sandbox.vehicleSubclasses[name];
+	return this.vehicleSubclasses[name];
 };
 
 
 
-Sandbox.vehicles = [];
 /**
  * @param {(string|Vehicle)} vehicleSubclass The name of the subclass, or the actual class object.
  * @param {Vector} pos Vehicle's position.
  * @param {Vector} vel Vehicle's velocity.
  */
-Sandbox.createVehicle = function(vehicleSubclass, pos, vel) {
+Steersman.prototype.createVehicle = function(vehicleSubclass, pos, vel) {
 	// If we're given a string, see if we've defined a subclass with that name.
 	if(typeof vehicleSubclass === "string") {
-		vehicleSubclass = Sandbox.vehicleSubclasses[vehicleSubclass];
+		vehicleSubclass = this.vehicleSubclasses[vehicleSubclass];
 	}
 	//.this won't work if the subclass does not directly extend Vehicle (2nd gen subclass)
 	if(typeof vehicleSubclass !== "function" || vehicleSubclass.prototype.constructor.name !== "Vehicle") {
@@ -49,42 +54,35 @@ Sandbox.createVehicle = function(vehicleSubclass, pos, vel) {
 	}
 
 	var vehicle = new vehicleSubclass(pos, vel);
-	Sandbox.vehicles.push(vehicle);
+	this.vehicles.push(vehicle);
 
 	return vehicle;
 };
 
 
-var updateFns = [];
-Sandbox.addUpdateFunction = function(fn) {
-	updateFns.push(fn);
+Steersman.prototype.addUpdateFunction = function(fn) {
+	this.updateFns.push(fn);
 };
 
 
-//.make a Sandbox setter. when it's changed, restart the interval (pause/play)
-var FPS = 30;
 
-var lastUpdate;
-Sandbox.deltaTime = 1;
-var update = function() {
-	var now = Date.now();
-	Sandbox.deltaTime = (now - lastUpdate) / 1000;
-	lastUpdate = now;
+Steersman.prototype.update = function() {
+	// update time variables
+	this.now = Date.now();
+	this.deltaTime = (this.now - this.lastUpdate) / 1000;
 
-	if(document.hasFocus()) {
-		updateFns.forEach(function(fn){
-			fn();
-		});
-	}
+	// perform all update functions
+	this.updateFns.forEach(function(fn){ fn(); });
+
+	this.lastUpdate = this.now;
 };
 
 
-var intervalID;
-Sandbox.play = function() {
-	Sandbox.pause();
-	lastUpdate = Date.now();
-	intervalID = setInterval(update, 1000/FPS);
+Steersman.prototype.play = function() {
+	this.pause();
+	this.lastUpdate = Date.now();
+	this.intervalID = setInterval(this.update.bind(this), 1000 / this.FPS);
 };
-Sandbox.pause = function() {
-	clearInterval(intervalID);
+Steersman.prototype.pause = function() {
+	clearInterval(this.intervalID);
 };

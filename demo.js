@@ -1,19 +1,19 @@
-var Vector = Sandbox.Vector;
-var Vehicle = Sandbox.Vehicle;
+var Vector = Steersman.Vector;
+var Vehicle = Steersman.Vehicle;
 
+
+var steersman = new Steersman;
 
 // set up html canvas
 var canvas = document.getElementById('canvas');
-canvas.width = document.documentElement.clientWidth;
-canvas.height = document.documentElement.clientHeight;
-var ctx = canvas.getContext('2d');
+steersman.ctx = canvas.getContext('2d');
 
 
 // default vehicle render code
 
 Vehicle.prototype.color = '#ccc';
 Vehicle.prototype.size = 2;
-Vehicle.prototype.draw = function() {
+Vehicle.prototype.draw = function(ctx) {
 	ctx.save();
 	ctx.fillStyle = this.color;
 	ctx.fillRect(this.position.x, this.position.y, this.size, this.size);
@@ -23,7 +23,7 @@ Vehicle.prototype.draw = function() {
 
 // configure classes
 
-var Red = Sandbox.extendVehicle("Red", {
+var Red = steersman.extendVehicle("Red", {
 	maxSpeed: 200,
 	maxForce: 5,
 	mass: 1,
@@ -33,7 +33,7 @@ var Red = Sandbox.extendVehicle("Red", {
 	size: 7
 });
 
-var Green = Sandbox.extendVehicle("Green", {
+var Green = steersman.extendVehicle("Green", {
 	maxSpeed: 200,
 	maxForce: 10,
 	mass: 1,
@@ -43,7 +43,7 @@ var Green = Sandbox.extendVehicle("Green", {
 	size: 4
 });
 
-var Blue = Sandbox.extendVehicle("Blue", {
+var Blue = steersman.extendVehicle("Blue", {
 	maxSpeed: 150,
 	maxForce: 15,
 	mass: 1,
@@ -53,25 +53,25 @@ var Blue = Sandbox.extendVehicle("Blue", {
 	size: 2
 });
 
-var Black = Sandbox.extendVehicle("Black");
+var Black = steersman.extendVehicle("Black");
 
 
 // set up vehicle instances
-var red = Sandbox.createVehicle(Red, new Vector(canvas.width / 2, canvas.height / 2));
+var red = steersman.createVehicle(Red, new Vector(canvas.width / 2, canvas.height / 2));
 var greens = [];
-for (var i = 0, n = 20; i < n; i++) {
-	greens.push(Sandbox.createVehicle(Green, new Vector(Math.random() * canvas.width, Math.random() * canvas.height)));
+for (var i = 0, n = 10; i < n; i++) {
+	greens.push(steersman.createVehicle(Green, new Vector(Math.random() * canvas.width, Math.random() * canvas.height)));
 }
 var blues = [];
-for (var i = 0, n = 500; i < n; i++) {
-	blues.push(Sandbox.createVehicle(Blue, new Vector(Math.random() * canvas.width, Math.random() * canvas.height)));
+for (var i = 0, n = 200; i < n; i++) {
+	blues.push(steersman.createVehicle(Blue, new Vector(Math.random() * canvas.width, Math.random() * canvas.height)));
 }
-var tBlue = Sandbox.createVehicle(Blue, new Vector(Math.random() * canvas.width, Math.random() * canvas.height)); // red's target blue
+var tBlue = steersman.createVehicle(Blue, new Vector(Math.random() * canvas.width, Math.random() * canvas.height)); // red's target blue
 blues.push(tBlue);
-var black = Sandbox.createVehicle(Black, new Vector(canvas.width / 2, canvas.height / 2));
+//var black = steersman.createVehicle(Black, new Vector(canvas.width / 2, canvas.height / 2));
 
 // special draw function for the target blue
-tBlue.draw = function() {
+tBlue.draw = function(ctx) {
 	ctx.save();
 	ctx.fillStyle = '#0ff';
 	ctx.fillRect(this.position.x - 3, this.position.y - 3, 9, 9);
@@ -96,8 +96,8 @@ canvas.addEventListener("click", function(event){
 
 
 // steering behaviors
-Sandbox.addUpdateFunction(function(){
-	var dt = Sandbox.deltaTime;
+steersman.addUpdateFunction(function(){
+	var dt = steersman.deltaTime;//.should be using this.deltaTime
 
 	// red pursues the target blue
 	red.applyForce(red.pursue(tBlue), dt);
@@ -131,15 +131,12 @@ Sandbox.addUpdateFunction(function(){
 
 
 // render code
-Sandbox.addUpdateFunction(function(){
+steersman.addUpdateFunction(function(){
+	var ctx = steersman.ctx;//.should be using this.ctx
 	ctx.fillStyle = '#def';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-	Sandbox.vehicles.forEach(function(v){
-		v.draw();
+	steersman.vehicles.forEach(function(v){
+		v.draw(ctx);
 	});
 });
-
-
-// start the update loop
-Sandbox.play();
