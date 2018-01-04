@@ -2,10 +2,10 @@
   "name": "steering-game",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "steersman.js",
   "scripts": {
-    "build": "browserify main.js -o bundle.js",
-    "watch": "watchify main.js -o bundle.js -v",
+    "build": "browserify steersman.js -o bundle.js",
+    "watch": "watchify steersman.js -o bundle.js -v",
     "test": "mocha"
   },
   "author": "Taylor Vance",
