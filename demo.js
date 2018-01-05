@@ -28,7 +28,6 @@ var Red = steersman.extendVehicle("Red", {
 	maxForce: 5,
 	mass: 1,
 	perception: 50,
-	leeway: 10,
 	color: '#c00',
 	size: 7
 });
@@ -38,7 +37,6 @@ var Green = steersman.extendVehicle("Green", {
 	maxForce: 10,
 	mass: 1,
 	perception: 100,
-	leeway: 20,
 	color: '#0c0',
 	size: 4
 });
@@ -48,7 +46,6 @@ var Blue = steersman.extendVehicle("Blue", {
 	maxForce: 15,
 	mass: 1,
 	perception: 100,
-	leeway: 15,
 	color: '#00c',
 	size: 2
 });

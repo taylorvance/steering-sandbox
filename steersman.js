@@ -28,7 +28,6 @@ Steersman.prototype.extendVehicle = function(name, config) {
 	this.vehicleSubclasses[name].prototype.maxForce = config.maxForce || 20;
 	this.vehicleSubclasses[name].prototype.mass = config.mass || 1;
 	this.vehicleSubclasses[name].prototype.perception = config.perception || 50;
-	this.vehicleSubclasses[name].prototype.leeway = config.leeway || 10;
 	this.vehicleSubclasses[name].prototype.color = config.color || '#c00';
 	this.vehicleSubclasses[name].prototype.size = config.size || 2;
 

@@ -2,7 +2,7 @@ var assert = require('assert');
 
 var Vector = require("/Users/decisiontoolbox/dev/steering/vector");//.
 var Vehicle = require("/Users/decisiontoolbox/dev/steering/vehicle");//.
-var asdf = require("../main.js");//.
+var asdf = require("../steersman.js");//.
 
 describe('Vector', function() {
 	describe('constructor', function() {
@@ -239,7 +239,6 @@ describe('Vehicle', function() {
 		MyVehicle.prototype.maxForce = 5;
 		MyVehicle.prototype.mass = 1;
 		MyVehicle.prototype.perception = 20;
-		MyVehicle.prototype.leeway = 2;
 
 		var mv = new MyVehicle(new Vector(42, 108), new Vector(-4, 8));
 		assert.equal(mv.position.x, 42);
@@ -380,13 +379,12 @@ describe('Vehicle', function() {
 
 
 
-describe('Sandbox', function() {
-	var Red = Sandbox.extendVehicle("Red", {
+describe('Steersman', function() {
+	var Red = Steersman.extendVehicle("Red", {
 		maxSpeed: 243,
 		maxForce: 5,
 		mass: 1,
 		perception: 50,
-		leeway: 10,
 		color: '#c00',
 		size: 7
 	});
@@ -406,18 +404,18 @@ describe('Sandbox', function() {
 	});
 
 	describe('vehicleSubclasses', function() {
-		it('should be accessible from the Sandbox object', function() {
+		it('should be accessible from the Steersman object', function() {
 			var red = new Red;
 			assert.equal(red.maxSpeed, 243);
 
-			assert.deepEqual(Sandbox.vehicleSubclasses["Red"], Red);
+			assert.deepEqual(Steersman.vehicleSubclasses["Red"], Red);
 		});
 	});
 
 	describe('#createVehicle()', function() {
 		it('should work with a string or the class object', function() {
-			var redStr = Sandbox.createVehicle("Red");
-			var redCls = Sandbox.createVehicle(Red);
+			var redStr = Steersman.createVehicle("Red");
+			var redCls = Steersman.createVehicle(Red);
 
 			assert.equal(redStr.maxSpeed, 243);
 			assert.equal(redCls.maxSpeed, 243);
