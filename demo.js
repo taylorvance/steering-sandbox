@@ -127,6 +127,26 @@ steersman.addUpdateFunction(function(){
 });
 
 
+// wrap vehicles if they move off canvas
+var wrapVehicles = function(){
+	steersman.vehicles.forEach(function(v){
+		if(v.position.x < 0) {
+			//v.position.x = canvas.width + v.position.x;
+			v.position.x = canvas.width;
+		} else if(v.position.x > canvas.width) {
+			//v.position.x = v.position.x - canvas.width;
+			v.position.x = 0;
+		}
+		if(v.position.y < 0) {
+			v.position.y = canvas.height;
+		} else if(v.position.y > canvas.height) {
+			v.position.y = 0;
+		}
+	});
+};
+steersman.addUpdateFunction(wrapVehicles);
+
+
 // render code
 steersman.addUpdateFunction(function(){
 	var ctx = steersman.ctx;//.should be using this.ctx
