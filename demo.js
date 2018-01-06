@@ -15,8 +15,16 @@ Vehicle.prototype.color = '#ccc';
 Vehicle.prototype.size = 2;
 Vehicle.prototype.draw = function(ctx) {
 	ctx.save();
-	ctx.fillStyle = this.color;
-	ctx.fillRect(this.position.x, this.position.y, this.size, this.size);
+	ctx.translate(this.position.x, this.position.y);
+	ctx.rotate(this.velocity.angle2(new Vector(1, 0)));
+	ctx.beginPath();
+	ctx.moveTo(0, -this.size);
+	ctx.lineTo(this.size/2, this.size/2);
+	ctx.lineTo(-this.size/2, this.size/2);
+	ctx.lineTo(0, -this.size);
+	ctx.stroke();
+	ctx.fillStyle = this.color || '#555';
+	ctx.fill();
 	ctx.restore();
 };
 
@@ -57,10 +65,10 @@ var Black = steersman.extendVehicle("Black");
 var red = steersman.createVehicle(Red, new Vector(canvas.width / 2, canvas.height / 2));
 var greens = [];
 for (var i = 0, n = 10; i < n; i++) {
-	greens.push(steersman.createVehicle(Green, new Vector(Math.random() * canvas.width, Math.random() * canvas.height)));
+	//greens.push(steersman.createVehicle(Green, new Vector(Math.random() * canvas.width, Math.random() * canvas.height)));
 }
 var blues = [];
-for (var i = 0, n = 200; i < n; i++) {
+for (var i = 0, n = 100; i < n; i++) {
 	blues.push(steersman.createVehicle(Blue, new Vector(Math.random() * canvas.width, Math.random() * canvas.height)));
 }
 var tBlue = steersman.createVehicle(Blue, new Vector(Math.random() * canvas.width, Math.random() * canvas.height)); // red's target blue
